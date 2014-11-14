@@ -1,0 +1,12 @@
+html, 
+body, 
+#map-canvas { 
+	height: 100%; 
+	margin: 0; 
+	padding: 0;
+}
+
+#button-list {
+	float: left;
+	margin: 0 auto;
+}
