@@ -1,0 +1,31 @@
+{
+  "name": "maps",
+  "main": "maps.js",
+  "version": "0.0.0",
+  "homepage": "https://github.com/jrasm91/maps",
+  "authors": [
+    "Jason Rasmussen <jrasm91@gmail.com>"
+  ],
+  "description": "Maps Surveys",
+  "moduleType": [
+    "globals"
+  ],
+  "keywords": [
+    "Google",
+    "Maps",
+    "Surveys"
+  ],
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "firebase": "~2.0.3",
+    "bootstrap": "~3.3.1"
+  }
+}

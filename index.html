@@ -1,17 +1,50 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <link rel="stylesheet" type="text/css" href="bower_components/bootstrap/dist/css/bootstrap.css"></link>
+  <link rel="stylesheet" type="text/css" href="bower_components/uikit/css/uikit.css"></link>
   <link rel="stylesheet" type="text/css" href="maps.css"></link>
+
   <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBO2mYXouh_ZuqxKMN52GASHK5lG9SLJb0&libraries=drawing">
   </script>
+  <script type="text/javascript" src="bower_components/jquery/dist/jquery.js"></script>
+  <script type="text/javascript" src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
+  <script type="text/javascript" src="bower_components/uikit/js/uikit.js"></script>
+  <script type="text/javascript" src="bower_components/firebase/firebase.js"></script>
+
   <script type="text/javascript" src="maps.js"></script>
+
+
 </head>
 <body>
-  <div id="button-list">
-    <button type="button" onclick='button_click()'>Button</button>
-  </div>
-  <div id="map-canvas">
+  <nav class="navbar navbar-inverse" role="navigation">
+      <div class="navbar-header">
+        <a class="navbar-brand" href="#">Boundary Questionnaire</a>
+      </div>
+      <ul class="navbar-form navbar-left">
+        <button type="button" class="btn btn-danger" onclick="app.firebaseTest()">Firebase Test</button>
+      </ul>
+      <ul class="navbar-form navbar-right">
+        <button type="button" class="btn btn-success" onclick="app.submit()">Submit</button>
+        <button type="button" class="btn btn-warning" onclick="app.toggleEditable()">Edit</button>
+        <button type="button" class="btn btn-danger" onclick="app.reset()">Reset</button>
+        <button type="button" class="btn btn-default" onclick="app.removeLast()">Undo</button>
+        <button type="button" class="btn btn-default" onclick="app.removeLast()">Undo-Shape</button>
+      </ul>
+    </div>
+  </nav>
+  <div id="map-canvas"></div>
+  <div id='alert-bar'></div>
 
-  </div>
 </body>
 </html>
+
+
+
+
+<!-- <button type="button" class="btn btn-primary" onclick='app.submit()'>Submit</button>
+      <button type="button" class="btn btn-primary" onclick='app.toggleEditable()'>Toggle Edit</button>
+      <button type="button" class="btn btn-danger" onclick='app.reset()'>Reset</button>
+    -->
+
+
