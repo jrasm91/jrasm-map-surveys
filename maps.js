@@ -10,9 +10,8 @@ Array.prototype.forEach = function(func){
 var bootstrap_alert = (function() {
   return {
     alert: function(aType, header, message){
-        $('#alert-bar').append('<div class="alert alert-' + aType + '"><a href="#" class="close" data-dismiss="alert">&times;</a><strong>' + header + '</strong> ' + message + '</div>');
-        $('.alert').delay(3000).fadeOut(300);
-
+      $('#alert-bar').append('<div class="alert alert-' + aType + '"><a href="#" class="close" data-dismiss="alert">&times;</a><strong>' + header + '</strong> ' + message + '</div>');
+      $('.alert').delay(3000).fadeOut(300);
     },
     warning: function(message){
       this.alert('warning', 'Warning!', message);
@@ -27,12 +26,12 @@ var bootstrap_alert = (function() {
 })();
 
 var app = function(){
-
   var editable = false;
   var polygons = [];
   var map;
   var drawingManager;
   var firebaseRef = new Firebase("https://map-survey.firebaseio.com")
+  var auth;
 
   function polygonToCoordinates(polygon){
     var coordinates = [];
@@ -82,7 +81,7 @@ var app = function(){
   };
 
   function submit(){
-    polygonsToSave = []
+    var polygonsToSave = []
     polygons.forEach(function(polygon){
       polygonsToSave.push({
         coordinates: polygonToCoordinates(polygon),
@@ -93,9 +92,13 @@ var app = function(){
         fillOpacity: polygon.fillOpacity
       });
     })
-    firebaseRef.set({
+
+    var data = {};
+    data[auth.uid] = {
       polygons: polygonsToSave
-    }, function(error){
+    };
+
+    firebaseRef.update(data, function(error){
       if(error){
         bootstrap_alert.error('Unable to save map. Please try again.');
       } else {
@@ -112,8 +115,20 @@ var app = function(){
     polygon.setMap(null);
   }
 
-  function firebaseTest(){
-    bootstrap_alert.error('Unable to save. Please try again.');
+  function showAll(){
+    // bootstrap_alert.error('Unable to save. Please try again.');
+    firebaseRef.authWithPassword({
+      email    : "test@map-survey.firebase.com",
+      password : "test123"
+    }, function(error, authData) {
+      if (error === null) {
+        bootstrap_alert.success('SU Authentication');
+        auth = authData;
+      } else {
+        bootstrap_alert.error('Unable to show all.');
+      }
+    });
+    loadAllFirebaseData()
   }
 
   function loadGoogleMaps(){
@@ -156,7 +171,19 @@ var app = function(){
         addPolygon(event.overlay)
       }
     });
-  }
+  };
+
+  function loginFirebase(){
+    firebaseRef.authAnonymously(function(error, authData) {
+      if (error) {
+        bootstrap_alert.warning('Unable to authenticate');
+      } else {
+        auth = authData;
+        bootstrap_alert.success('Authenticated!');
+      }
+    });
+  };
+
   function loadFirebaseData(){
     firebaseRef.on("value", function(snapshot) {
       var data = snapshot.val();
@@ -178,12 +205,46 @@ var app = function(){
     }, function (errorObject) {
       console.log("The read failed: " + errorObject.code);
     });
-  }
+  };
+
+  function loadAllFirebaseData(){
+    firebaseRef.on("value", function(snapshot) {
+      var allData = snapshot.val();
+      var keys = [];
+      for (var key in allData) {
+        if (allData.hasOwnProperty(key)) {
+          keys.push(allData[key]);
+        }
+      }
+      reset();
+      keys.forEach(function(data){
+        if (data.polygons){
+          data.polygons.forEach(function(nextPolygon){
+            if(polygons.indexOf(nextPolygon) == -1){
+              console.log(polygons);
+              addPolygon(new google.maps.Polygon({
+                paths: coordinatesToPath(nextPolygon.coordinates),
+                strokeColor: nextPolygon.strokeColor,
+                strokeOpacity: nextPolygon.strokeOpacity,
+                strokeWeight: nextPolygon.strokeWeight,
+                fillColor: nextPolygon.fillColor,
+                fillOpacity: nextPolygon.fillOpacity
+              }));
+            }
+          });
+        }
+      });
+    }, function (errorObject) {
+      console.log("The read failed: " + errorObject.code);
+    });
+  };
+  
 
   function initialize() {
     loadGoogleMaps();
     loadDrawingManager()
-    loadFirebaseData();
+    loginFirebase();
+    // loadFirebaseData();
   };
 
   return {
@@ -193,7 +254,7 @@ var app = function(){
     deletePolygon: deletePolygon,
     initialize: initialize,
     removeLast: removeLast,
-    firebaseTest: firebaseTest
+    showAll: showAll
   };
 }();
 

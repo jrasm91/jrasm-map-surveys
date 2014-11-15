@@ -1,0 +1,9 @@
+{
+  "firebase": "map-survey",
+  "public": ".",
+  "ignore": [
+    "firebase.json",
+    "**/.*",
+    "**/node_modules/**"
+  ]
+}
