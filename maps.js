@@ -78,6 +78,7 @@ var app = function(){
       polygons[i].setMap(null);
       polygons[i].setMap(map)
     };
+    drawingManager.setDrawingMode(editable? null: google.maps.drawing.OverlayType.POLYGON);
   };
 
   function submit(){
