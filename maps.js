@@ -212,6 +212,10 @@ var app = function(){
       var allData = snapshot.val();
       var keys = [];
       for (var key in allData) {
+        if (key.split(':')[0] === 'simplelogin'){
+          console.log('ignoring..');
+          continue;
+        }
         if (allData.hasOwnProperty(key)) {
           keys.push(allData[key]);
         }
@@ -221,7 +225,6 @@ var app = function(){
         if (data.polygons){
           data.polygons.forEach(function(nextPolygon){
             if(polygons.indexOf(nextPolygon) == -1){
-              console.log(polygons);
               addPolygon(new google.maps.Polygon({
                 paths: coordinatesToPath(nextPolygon.coordinates),
                 strokeColor: nextPolygon.strokeColor,
