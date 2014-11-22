@@ -1,0 +1,27 @@
+{
+  "name": "maps",
+  "version": "1.0.0",
+  "description": "maps survey application",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jrasm91/maps.git"
+  },
+  "keywords": [
+    "google",
+    "maps",
+    "surveys"
+  ],
+  "author": "Jason Rasmussen",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jrasm91/maps/issues"
+  },
+  "homepage": "https://github.com/jrasm91/maps",
+  "dependencies": {
+    "firebase-token-generator": "^2.0.0"
+  }
+}

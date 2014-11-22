@@ -1,48 +1,66 @@
 <!DOCTYPE html>
-<html>
+<html ng-app=mapSurvey>
 <head>
   <title>Map Survey</title>
   <link rel="icon" href="favicon.ico" sizes="16x16">
   <link rel="stylesheet" type="text/css" href="bower_components/bootstrap/dist/css/bootstrap.css"></link>
-  <link rel="stylesheet" type="text/css" href="maps.css"></link>
+  <link rel="stylesheet" type="text/css" href="css/index.css"></link>
 
   <script type="text/javascript" src="bower_components/jquery/dist/jquery.js"></script>
   <script type="text/javascript" src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
+  <script type="text/javascript" src="bower_components/angular/angular.js"></script>
+  <script type="text/javascript" src="bower_components/angular-route/angular-route.js"></script>
   <script type="text/javascript" src="bower_components/firebase/firebase.js"></script>
-  <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBO2mYXouh_ZuqxKMN52GASHK5lG9SLJb0&libraries=drawing"></script>
-  <script type="text/javascript" src="maps.js"></script>
 
+  <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBO2mYXouh_ZuqxKMN52GASHK5lG9SLJb0&libraries=drawing"></script>
+
+  <script type="text/javascript" src="js/app.js"></script>
 
 </head>
-<body>
+<body ng-controller="MainController as mainCtrl">
   <nav class="navbar navbar-inverse" role="navigation">
-      <div class="navbar-header">
-        <a class="navbar-brand" href="#">Boundary Questionnaire</a>
-      </div>
-      <ul class="navbar-form navbar-left">
-        <button type="button" class="btn btn-danger" onclick="app.showAll()">Show All</button>
-      </ul>
-      <ul class="navbar-form navbar-right">
-        <button type="button" class="btn btn-success" onclick="app.submit()">Submit</button>
-        <button type="button" class="btn btn-warning" onclick="app.toggleEditable()">Edit</button>
-        <button type="button" class="btn btn-danger" onclick="app.reset()">Reset</button>
-        <button type="button" class="btn btn-default" onclick="app.removeLast()">Undo</button>
-        <button type="button" class="btn btn-default" onclick="app.removeLast()">Undo-Shape</button>
-      </ul>
+    <div class="navbar-header">
+      <a class="navbar-brand" href="#">Boundary Questionnaire</a>
     </div>
+    <form class="nav navbar-form navbar-right">
+      <button type="button" class="btn btn-default" ng-disabled="!mainCtrl.isUndoDeleteActive()" ng-click="mainCtrl.polygonUndoDelete()">Undo Delete</button>
+      <button type="button" class="btn btn-danger" data-toggle="modal" data-target=".clear-map-modal">Clear</button>
+    </form>
+    <ul class="nav navbar-form navbar-right">
+      <li class="dropdown">
+        <button type="button" class="btn btn-success" ng-click="mainCtrl.submit()">Submit</button>
+        <button type="button" class="btn btn-warning" ng-click="mainCtrl.toggleEdit()">{{ mainCtrl.isEditable()? 'Finish':'Edit' }}</button>
+        <button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown" ng-disabled="!mainCtrl.isDeleteActive()">Delete</button>
+        <ul id="delete-list"class="dropdown-menu" role="menu">
+          <li class="text-right" ng-repeat="polygon in mainCtrl.getAddedPolygons()" ng-mouseover="mainCtrl.polygonSelected(polygon)" ng-mouseleave="mainCtrl.polygonUnselected(polygon)" ng-click="mainCtrl.polygonDelete(polygon)">
+            <a href="#">
+              <span class="pull-left">Boundry #{{$index + 1}}</span>
+              <span class="glyphicon glyphicon-remove pull-right"></span>
+            </a>
+          </li>
+        </ul>
+      </li>
+    </ul>
   </nav>
+  <div class="modal fade clear-map-modal">
+    <div class="modal-dialog modal-sm">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+          <h4 class="modal-title">Clear Map</h4>
+        </div>
+        <div class="modal-body">
+          <p>Clear the whole map?</p>
+        </div>
+        <div class="modal-footer text-center">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-danger" data-dismiss="modal" ng-click="mainCtrl.polygonDeleteAll()">Clear</button>
+        </div>
+      </div>
+    </div>
+  </div>
   <div id="map-canvas"></div>
   <div id='alert-bar'></div>
-
 </body>
 </html>
-
-
-
-
-<!-- <button type="button" class="btn btn-primary" onclick='app.submit()'>Submit</button>
-      <button type="button" class="btn btn-primary" onclick='app.toggleEditable()'>Toggle Edit</button>
-      <button type="button" class="btn btn-danger" onclick='app.reset()'>Reset</button>
-    -->
-
 
