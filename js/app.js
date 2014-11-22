@@ -31,6 +31,8 @@ app.controller('MainController', ['$scope', '$location', 'GoogleMaps', 'PolygonO
 		var token = url.split('?')[1].split('=')[1];
 		FirebaseManager.loginWithToken(token, loadPolygons, loginStatus);
 		$location.url($location.path());
+	} else {
+		FirebaseManager.loginWithAnonymous(loadPolygons, loginStatus);
 	}
 
 	function loginStatus(err, uid){
@@ -50,7 +52,7 @@ app.controller('MainController', ['$scope', '$location', 'GoogleMaps', 'PolygonO
 		polygonsAdded = []
 		polygonsDeleted = [];
 		var data = data.val();
-		var newPolygons = data == null? [] : data.polygons;
+		var newPolygons = data == null? {} : data.polygons;
 		for(var uid in newPolygons){
 			var polygon = newPolygons[uid]
 			addPolygon(new google.maps.Polygon({
@@ -139,7 +141,7 @@ app.controller('MainController', ['$scope', '$location', 'GoogleMaps', 'PolygonO
 			if(err){
 				NotificationManager.error('Unable to save data!');
 			} else {
-				NotificationManager.success('Map Saved!');
+				NotificationManager.success('Map Submitted!');
 			}
 		});
 	};
@@ -181,7 +183,6 @@ app.factory('FirebaseManager', [function(){
 	var authUID = null;
 
 	function isLoggedInWith(authType){
-		firebaseRef.unauth();
 		var authData = firebaseRef.getAuth();
 		if(authData && authData.uid && authData.uid.indexOf(authType) != -1){
 			authUID = authData.uid;
@@ -192,27 +193,42 @@ app.factory('FirebaseManager', [function(){
 		}
 	};
 
+	function loginCallback(err, authData, onDataLoad, callback){
+		if(err){
+			callback(err);
+		} else {
+			authUID = authData.uid;
+			firebaseRef = new Firebase('https://map-survey.firebaseio.com/' + authUID);
+			firebaseRef.on("value", onDataLoad);
+			console.log('Authenticated successfully: ' + authUID);
+			callback(null, authUID);
+		}
+	}
+
 	return {
 		loginWithToken: function(AUTH_TOKEN, onDataLoad, callback){
 			if(isLoggedInWith('token')){
 				firebaseRef.unauth();
 			} 
-			firebaseRef.authWithCustomToken(AUTH_TOKEN, function(error, authData) {
-				if (error) {
-					callback(error);
-				} else {
-					authUID = authData.uid;
-					firebaseRef = new Firebase('https://map-survey.firebaseio.com/' + authUID);
-					firebaseRef.on("value", onDataLoad);
-					callback(null, authUID);
-					console.log('Authenticated successfully: ' + authUID);
-				}
+			firebaseRef.authWithCustomToken(AUTH_TOKEN, function(err, authData){
+				loginCallback(err, authData, onDataLoad, callback);
 			});
+
+		},
+		loginWithAnonymous: function(onDataLoad, callback){
+			if(isLoggedInWith('anoynmous')){
+				callback(null, authUID);
+			} else {
+				firebaseRef.authAnonymously(function(err, authData){
+					loginCallback(err, authData, onDataLoad, callback);
+				});
+			}
 		},
 		saveData: function(polygons, callback){
 			firebaseRef.update({
 				polygons: polygons
 			}, callback);
+			firebaseRef.unauth();
 		}
 	}
 }]);
