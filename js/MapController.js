@@ -12,6 +12,18 @@ angular.module('mapSurvey')
 			ctrlAlias.addedIds = [];
 			ctrlAlias.deletedIds = [];
 
+			ctrlAlias.zoomIn = function(){
+				MapFactory.map.setOptions({
+					zoom: MapFactory.map.getZoom() + 1
+				});
+			}
+
+			ctrlAlias.zoomOut = function(){
+				MapFactory.map.setOptions({
+					zoom: MapFactory.map.getZoom() - 1
+				});
+			}
+
 			var url = $location.absUrl();
 			if (!(url && url.indexOf('?survey=') != -1 && url.split('?')[1].split('=')[1])) {
 				ctrlAlias.isLocked = true;

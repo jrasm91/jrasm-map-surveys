@@ -1,10 +1,11 @@
 <!DOCTYPE html>
-<html ng-app=mapSurvey>
+<html data-ng-app=mapSurvey>
 <head>
+  <meta charset="UTF-8">
   <title>Map Survey</title>
   <link rel="icon" href="favicon.ico" sizes="16x16">
-  <link rel="stylesheet" type="text/css" href="bower_components/bootstrap/dist/css/bootstrap.css"></link>
-  <link rel="stylesheet" type="text/css" href="css/index.css"></link>
+  <link rel="stylesheet" type="text/css" href="bower_components/bootstrap/dist/css/bootstrap.css">
+  <link rel="stylesheet" type="text/css" href="css/index.css">
 
   <script type="text/javascript" src="bower_components/jquery/dist/jquery.js"></script>
   <script type="text/javascript" src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
@@ -18,112 +19,178 @@
   <script type="text/javascript" src="js/MapFactory.js"></script>
 
 </head>
-<body ng-controller="MapController as mapCtrl">
-  <nav class="navbar navbar-inverse" role="navigation">
-    <div class="navbar-header">
-      <a class="navbar-brand" href="#">Boundary Questionnaire</a>
-    </div>
+<body data-ng-controller="MapController as mapCtrl">
+  <nav class="navbar navbar-inverse navbar-static-top" role="navigation">
+    <div class="container-fluid">
+      <!-- Brand and toggle get grouped for better mobile display -->
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="#">Boundary Questionnaire</a>
+      </div>
 
-    <!-- INSTRUCTIONS -->
-    <form class="nav navbar-form navbar-left">
-      <button ng-disabled="mapCtrl.isLocked" type="button" class="btn btn-info" data-toggle="modal" data-target=".how-to-use-modal">Instructions</button>
-    </form>
+      <!-- Collect the nav links, forms, and other content for togglidata-ng -->
+      <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 
-    <!-- UNDO DELETE, CLEAR -->
-    <form class="nav navbar-form navbar-right">
-      <button ng-disabled="!mapCtrl.isUndoDeletable() || mapCtrl.isLocked" type="button" class="btn btn-default" ng-click="mapCtrl.undoDeletePolygon()">Undo Delete</button>
-      <button ng-disabled="!mapCtrl.isDeletable() || mapCtrl.isLocked" type="button" class="btn btn-danger" data-toggle="modal" data-target=".clear-map-modal">Clear</button>
-    </form>
-
-    <!-- SUBMIT | EDIT | DELETE -->
-    <ul class="nav navbar-form navbar-right">
-      <li class="dropdown">
-        <button ng-disabled="mapCtrl.isLocked" type="button" class="btn btn-success" data-toggle="modal" data-target=".submit-map-modal">Submit</button>
-        <button ng-disabled="mapCtrl.isLocked" type="button" class="btn btn-warning" ng-click="mapCtrl.toggleEdit()">{{ mapCtrl.isEditMode? 'Finish':'Edit' }}</button>
-        <button ng-disabled="mapCtrl.isLocked || !mapCtrl.isDeletable()" type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown">Delete</button>
-        <ul id="delete-list"class="dropdown-menu" role="menu">
-          <li ng-disabled="mapCtrl.isLocked" class="text-right" ng-repeat="uid in mapCtrl.addedIds" ng-mouseover="mapCtrl.selectPolygon(uid)" ng-mouseleave="mapCtrl.unselectPolygon(uid)" ng-click="mapCtrl.deletePolygon(uid)">
-            <a href="#">
-              <span class="pull-left">Boundry #{{$index + 1}}</span>
-              <span class="glyphicon glyphicon-remove pull-right"></span>
-            </a>
+        <!-- INSTRUCTIONS -->
+        <ul class="nav navbar-left">
+          <li>
+            <form class="navbar-form">
+              <button data-ng-disabled="mapCtrl.isLocked" type="button" class="btn btn-info" data-toggle="modal" data-target=".how-to-use-modal">Instructions</button>
+            </form>
           </li>
         </ul>
-      </li>
-    </ul>
-  </nav>
 
-  <!-- CLEAR MAP MODAL -->
-  <div class="modal fade clear-map-modal">
-    <div class="modal-dialog modal-sm">
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-          <h4 class="modal-title">Clear Map</h4>
-        </div>
-        <div class="modal-body">
-          <p>Clear the whole map?</p>
-        </div>
-        <div class="modal-footer text-center">
-          <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-          <button type="button" class="btn btn-danger" data-dismiss="modal" ng-click="mapCtrl.clearPolygons()">Clear</button>
+        <ul class="nav navbar-right">
+          <li>
+            <form class="navbar-form">
+              <button data-ng-disabled="mapCtrl.isLocked" type="button" class="btn btn-default" ng-click="mapCtrl.zoomIn()">Zoom <span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button>
+              <button data-ng-disabled="mapCtrl.isLocked" type="button" class="btn btn-default" ng-click="mapCtrl.zoomOut()">Zoom <span class="glyphicon glyphicon-minus" aria-hidden="true"></span></button>
+            </form>
+          </li>
+        </ul>
+
+        <!-- UNDO DELETE, CLEAR -->
+        <ul class="nav navbar-right">
+          <li>
+            <form class="navbar-form">
+              <button data-ng-disabled="!mapCtrl.isUndoDeletable() || mapCtrl.isLocked" type="button" class="btn btn-default" data-ng-click="mapCtrl.undoDeletePolygon()">Undo Delete</button>
+              <button data-ng-disabled="!mapCtrl.isDeletable() || mapCtrl.isLocked" type="button" class="btn btn-danger" data-toggle="modal" data-target=".clear-map-modal">Clear</button>
+            </form>
+          </li>
+        </ul>
+
+        <!-- SUBMIT | EDIT | DELETE -->
+        <ul class="nav navbar-right">
+          <li class="dropdown">
+            <form class="navbar-form delete-form">
+              <button data-ng-disabled="mapCtrl.isLocked" type="button" class="btn btn-success" data-toggle="modal" data-target=".submit-map-modal">Submit</button>
+              <button data-ng-disabled="mapCtrl.isLocked" type="button" class="btn btn-warning" data-ng-click="mapCtrl.toggleEdit()">{{ mapCtrl.isEditMode? 'Draw':'Edit' }}</button>
+              <button data-ng-disabled="mapCtrl.isLocked || !mapCtrl.isDeletable()" type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown">Delete</button>
+              <ul id="delete-list" class="dropdown-menu" role="menu">
+                <li data-ng-disabled="mapCtrl.isLocked" class="text-right" data-ng-repeat="uid in mapCtrl.addedIds" data-ng-mouseover="mapCtrl.selectPolygon(uid)" data-ng-mouseleave="mapCtrl.unselectPolygon(uid)" data-ng-click="mapCtrl.deletePolygon(uid)">
+                  <a href="#">
+                    <span class="pull-left">Boundry #{{$index + 1}}</span>
+                    <span class="glyphicon glyphicon-remove pull-right"></span>
+                  </a>
+                </li>
+              </ul>
+            </li>
+          </form>
+        </ul>
+      </nav>
+
+      <!-- CLEAR MAP MODAL -->
+      <div class="modal fade clear-map-modal">
+        <div class="modal-dialog modal-sm">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+              <h4 class="modal-title">Clear Map</h4>
+            </div>
+            <div class="modal-body">
+              <p>Clear the whole map?</p>
+            </div>
+            <div class="modal-footer text-center">
+              <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+              <button type="button" class="btn btn-danger" data-dismiss="modal" data-ng-click="mapCtrl.clearPolygons()">Clear</button>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
-  </div>
 
-  <!-- HOW TO USE MODAL -->
-  <div class="modal fade how-to-use-modal">
-    <div class="modal-dialog modal-lg">
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-          <h4 class="modal-title">Instructions</h4>
-        </div>
-        <div class="modal-body">
-          <div>
-            <h4>Add</h4>
-            <video autoplay loop width="300" height="225">
-              <source src="img/AddPolygon.mp4" class="helper-gif-image">
-              </div>
+      <!-- HOW TO USE MODAL -->
+
+      <div class="modal fade how-to-use-modal">
+        <div class="modal-dialog modal-md">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+              <h4 class="modal-title">Instructions</h4>
             </div>
+            <div class="modal-body">
+              <div class="row">
+                <!-- <div class="container col-md-12"> -->
+                <!-- <div class="row"> -->
+                <div class="col-md-7">
+                  <h4>Add</h4>
+                  <ul>
+                    <li>Click to start a new boundry</li>
+                    <li>Click again to add additional edges</li>
+                    <li>Finish by clicking on the first edge again</li>
+                  </ul>
+                  <p> </p>
+                </div>
+                <div class="col-md-5">
+                  <video autoplay loop>
+                    <source src="img/AddPolygon.mp4" class="helper-gif-image"/>
+                  </video>
+                </div>
+              </div>
+              <div class="row">
+                <br>
+              </div>
+              <div class="row">
+                <div class="col-md-7">
+                  <h4>Edit</h4>
+                  <ul>
+                    <li>To edit a boundry, click 'edit'</li>
+                    <li>To continue drawing, click 'done'</li>
+                  </ul>
+                </div>
+                <div class="col-md-5 text-center" id='how-to-button-col'>
+                    <button type="button" class="btn btn-warning text-center">Edit</button>
+                    <button type="button" class="btn btn-warning text-center">Done</button>
+                </div>
+              </div>
+              <!-- </div> -->
+              <!-- </div> -->
+            </div>
+
             <div class="modal-footer text-center">
               <button type="button" class="btn btn-info" data-dismiss="modal">Close</button>
             </div>
           </div>
         </div>
       </div>
+    </div>
 
-      <!-- SUBMIT MAP MODAL -->
-      <div class="modal fade submit-map-modal">
-        <div class="modal-dialog modal-sm">
-          <div class="modal-content">
-            <div class="modal-header">
-              <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-              <h4 class="modal-title">Submit</h4>
-            </div>
-            <div class="modal-body">
-              <p>Submit the final map?</p>
-            </div>
-            <div class="modal-footer text-center">
-              <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-              <button type="button" class="btn btn-success" data-dismiss="modal" ng-click="mapCtrl.submit()">Submit</button>
-            </div>
+
+    <!-- SUBMIT MAP MODAL -->
+    <div class="modal fade submit-map-modal">
+      <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            <h4 class="modal-title">Submit</h4>
+          </div>
+          <div class="modal-body">
+            <p>Submit map and close survey?</p>
+          </div>
+          <div class="modal-footer text-center">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+            <button type="button" class="btn btn-success" data-dismiss="modal" data-ng-click="mapCtrl.submit()">Submit</button>
           </div>
         </div>
       </div>
-      <div ng-hide="mapCtrl.isLocked" id="map-canvas"></div>
-      <div id='alert-bar'></div>
-      <div ng-show="mapCtrl.isSubmitted">
-        <div class="container">
-          <h1>Thank you for your submission!</h1>
-        </div>
+    </div>
+
+    <div data-ng-hide="mapCtrl.isLocked" id="map-canvas"></div>
+    <div id='alert-bar'></div>
+    <div data-ng-show="mapCtrl.isSubmitted">
+      <div class="container">
+        <h1>Thank you for your submission!</h1>
       </div>
-      <div ng-show="mapCtrl.isAlreadySubmitted">
-        <div class="container">
-          <h1>The link is invalid or has already been submitted.</h1>
-        </div>
+    </div>
+    <div data-ng-show="mapCtrl.isAlreadySubmitted">
+      <div class="container">
+        <h1>The link is invalid or has already been submitted.</h1>
       </div>
-    </body>
-    </html>
+    </div>
+  </body>
+  </html>
 

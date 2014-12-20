@@ -6,6 +6,11 @@ body,
 	padding: 0;
 }
 
+video {
+	width: 100%    !important;
+	height: auto   !important;
+}
+
 .navbar {
 	margin-bottom: 0px;
 	padding-right: 5px;
@@ -13,9 +18,9 @@ body,
 }
 
 #alert-bar {
-   position: fixed;
-   top: 60px;
-   right: 5px;
+	position: fixed;
+	top: 60px;
+	right: 5px;
 }
 
 .close {
@@ -43,3 +48,10 @@ ul.dropdown-menu li a {
 	width: 400px;
 }
 
+#delete-list {
+	margin-right: 15px !important;
+}
+
+#how-to-button-col {
+	padding-top: 30px;
+}

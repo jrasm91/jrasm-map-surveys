@@ -31,10 +31,10 @@ angular.module('mapSurvey')
 				panControl: false,
 				streetViewControl: false,
 				mapTypeControl: false,
-				zoomControl: true,
-				zoomControlOptions: {
-					style: google.maps.ZoomControlStyle.SMALL
-				},
+				zoomControl: false,
+				// zoomControlOptions: {
+				// 	style: google.maps.ZoomControlStyle.SMALL
+				// },
 				scaleControl: false
 			});
 
