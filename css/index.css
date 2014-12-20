@@ -38,3 +38,8 @@ ul.dropdown-menu li a {
 	overflow: hidden;
 }
 
+.helper-gif-image {
+	height: 300px;
+	width: 400px;
+}
+
